@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Favorite } = require('../models');
 const { encryptPassword, decryptPassword } = require('../helpers/bcrypt.js');
 const { generateToken, verifyToken } = require('../helpers/jwt.js');
 
@@ -159,6 +159,45 @@ class UserController {
             });
         }
     }
+
+    static async getById(request, response) {
+        try {
+            const id = +request.params.id;
+
+            let result = await User.findByPk(id, {
+                include: [ Favorite ],
+                attributes: {
+                    exclude: [ 'password' ]
+                }
+            });
+
+            result !== null ? response.status(200).json({
+                status: true,
+                message: `User with an ID of ${id} found!`,
+                data: result
+            }) : response.status(404).json({
+                status: true,
+                message: `User with an ID of ${id} wasn't found!`,
+                data: null
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            })
+        }
+    }
+
+    /*static async search(request, response) {
+        try {
+            const query = request.params.query.toLowerCase();
+
+            let result = await User.findAll({
+                where: 
+            })
+        }
+    }*/
 }
 
 module.exports = UserController;

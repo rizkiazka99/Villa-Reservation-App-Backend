@@ -6,5 +6,6 @@ const { auth } = require('../middlewares/auth.js');
 usersRoutes.post('/login', UserController.login);
 usersRoutes.post('/register', upload.single('profile-picture'), UserController.register);
 usersRoutes.put('/update/:id', auth, upload.single('profile-picture'), UserController.update);
+usersRoutes.get('/:id', auth, UserController.getById);
 
 module.exports = usersRoutes

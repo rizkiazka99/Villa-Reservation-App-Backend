@@ -10,12 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Favorite.hasOne(models.User);
-      Favorite.hasOne(models.Location);
+      Favorite.belongsTo(models.User);
+      Favorite.belongsTo(models.Location);
     }
   }
   Favorite.init({
-    UsersId: DataTypes.INTEGER,
+    UserId: DataTypes.INTEGER,
     LocationId: DataTypes.INTEGER,
     name: DataTypes.STRING,
     description: DataTypes.STRING,

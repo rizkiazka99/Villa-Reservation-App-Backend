@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Villa.belongsToMany(models.User, { through: models.Booking });
       Villa.belongsToMany(models.User, { through: models.VillaReview });
-      Villa.hasMany(models.VillaGallery);
-      Villa.hasOne(models.Location);
+      //Villa.hasMany(models.VillaGallery);
+      Villa.belongsTo(models.Location);
     }
   }
   Villa.init({

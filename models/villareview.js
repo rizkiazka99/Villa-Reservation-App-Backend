@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true
     },
-    VillasId: DataTypes.INTEGER,
-    UsersId: DataTypes.INTEGER,
+    VillaId: DataTypes.INTEGER,
+    UserId: DataTypes.INTEGER,
     rating: DataTypes.STRING,
     comment: DataTypes.STRING
   }, {

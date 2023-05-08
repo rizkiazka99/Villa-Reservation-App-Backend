@@ -1,5 +1,5 @@
 const { User } = require('../models');
-const { decryptPassword } = require('../helpers/bcrypt.js');
+const { encryptPassword, decryptPassword } = require('../helpers/bcrypt.js');
 const { generateToken, verifyToken } = require('../helpers/jwt.js');
 
 class UserController {
@@ -8,14 +8,24 @@ class UserController {
             let result;
             const { email, phone, name, password } = request.body;
 
-            let duplicateAccount = await User.findAll({
+            let duplicateAccountEmail = await User.findOne({
                 where: { email }
             });
 
-            if (duplicateAccount) {
+            let duplicateAccountPhone = await User.findOne({
+                where: { phone }
+            });
+
+            if (duplicateAccountEmail) {
                 response.status(403).json({
                     status: false,
                     message: 'This e-mail address has been used by another account',
+                    data: null
+                });
+            } else if (duplicateAccountPhone) {
+                response.status(403).json({
+                    status: false,
+                    message: 'This phone number has been used by another account',
                     data: null
                 });
             } else {
@@ -105,8 +115,7 @@ class UserController {
             if (id !== idAuth) {
                 response.status(403).json({
                     status: false,
-                    message: 'You are not the authorized user!',
-                    data: null
+                    message: 'You are not the authorized user!'
                 });
             } else {
                 let defaultData = await User.findByPk(id);
@@ -118,34 +127,35 @@ class UserController {
                         email: email === undefined ? defaultData.email : email,
                         phone: phone === undefined ? defaultData.phone : phone,
                         name: name === undefined ? defaultData.name : name,
-                        password: password == undefined ? defaultData.password : password,
+                        password: password == undefined ? defaultData.password : encryptPassword(password),
                         profile_picture: profile_picture
+                    }, { 
+                        where: {id} 
                     });
                 } else {
                     result = await User.update({
                         email: email === undefined ? defaultData.email : email,
                         phone: phone === undefined ? defaultData.phone : phone,
                         name: name === undefined ? defaultData.name : name,
-                        password: password == undefined ? defaultData.password : password,
+                        password: password == undefined ? defaultData.password : encryptPassword(password),
                         profile_picture: defaultData.profile_picture
+                    }, { 
+                        where: {id} 
                     });
                 }
 
                 result[0] === 1 ? response.status(200).json({
                     status: true,
-                    message: `User with an ID of ${id} has been updated`,
-                    data: result
+                    message: `User with an ID of ${id} has been updated`
                 }) : response.status(404).json({
                     status: false,
-                    message: `User with an ID of ${id} couldn't be updated or wasn't found`,
-                    data: null
+                    message: `User with an ID of ${id} couldn't be updated or wasn't found`
                 });
             }
         } catch(err) {
             response.status(500).json({
                 status: false,
-                message: String(err),
-                data: null
+                message: String(err)
             });
         }
     }

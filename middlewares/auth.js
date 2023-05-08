@@ -2,11 +2,11 @@ const { verifyToken } = require('../helpers/jwt.js');
 
 const auth = (request, response, next) => {
     console.log('Auth initiated!');
-    const accessToken = request.headers.accessToken;
+    const access_token = request.headers.access_token;
 
-    if (accessToken) {
+    if (access_token) {
         try {
-            let verify_token = verifyToken(accessToken);
+            let verify_token = verifyToken(access_token);
             request.userData = verify_token;
             next();
         } catch(err) {

@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Villa.belongsToMany(models.User, { through: models.Booking });
       Villa.belongsToMany(models.User, { through: models.VillaReview });
-      //Villa.hasMany(models.VillaGallery);
+      Villa.hasMany(models.VillaGalery);
       Villa.belongsTo(models.Location);
     }
   }

@@ -1,6 +1,7 @@
-const { User, Favorite } = require('../models');
+const { User, Favorite, sequelize } = require('../models');
 const { encryptPassword, decryptPassword } = require('../helpers/bcrypt.js');
 const { generateToken, verifyToken } = require('../helpers/jwt.js');
+const { Op } = require('sequelize');
 
 class UserController {
     static async register(request, response) {
@@ -185,19 +186,73 @@ class UserController {
                 status: false,
                 message: String(err),
                 data: null
-            })
+            });
         }
     }
 
-    /*static async search(request, response) {
+    static async search(request, response) {
         try {
             const query = request.params.query.toLowerCase();
 
             let result = await User.findAll({
-                where: 
-            })
+                order: [
+                    [ 'id', 'asc' ]
+                ],
+                where: {
+                    [Op.or]: [
+                        { name: sequelize.where(sequelize.fn('LOWER', sequelize.col('User.name')), 'LIKE', '%' + query + '%') },
+                        { email: sequelize.where(sequelize.fn('LOWER', sequelize.col('email')), 'LIKE', '%' + query + '%') }
+                    ]
+                }, 
+                include: [ Favorite ],
+                attributes: {
+                    exclude: [ 'password' ]
+                }
+            });
+            
+            result.length !== 0 ? response.status(200).json({
+                status: true,
+                message: `${result.length} results found`,
+                data: result
+            }) : response.status(404).json({
+                status: false,
+                message: `${result.length} results found`,
+                data: result
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            });
         }
-    }*/
+    }
+
+    static async getAll(request, response) {
+        try {
+            let result = await User.findAll({
+                order: [
+                    [ 'id', 'asc' ]
+                ],
+                include: [ Favorite ],
+                attributes: {
+                    exclude: [ 'password' ]
+                }
+            });
+
+            response.status(200).json({
+                status: true,
+                message: 'All users fetched',
+                data: result
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            });
+        }
+    }
 }
 
 module.exports = UserController;

@@ -1,4 +1,4 @@
-const { Villa, Location, VillaGalery } = require('../models');
+const { Villa, Location, VillaGalery, sequelize } = require('../models');
 
 class VillaController {
     static async getAll(request, response) {
@@ -95,7 +95,99 @@ class VillaController {
             response.status(500).json({
                 status: false,
                 message: String(err)
+            });
+        }
+    }
+
+    static async delete(request, response) {
+        try {
+            const roleAuth = request.userData.role;
+            const id = +request.params.id;
+
+            if (roleAuth !== 'Admin') {
+                response.status(403).json({
+                    status: false,
+                    message: 'Only admins are allowed to do this action'
+                });
+            } else {
+                let result = await Villa.destroy({
+                    where: { id }
+                });
+
+                result === 1 ? response.status(200).json({
+                    status: true,
+                    message: `Villa with an ID of ${id} has been deleted`
+                }) : response.status(404).json({
+                    status: false,
+                    message: `Villa with an ID of ${id} couldn't be deleted or wasn't found`
+                });
+            }
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err)
+            });
+        }
+    }
+
+    static async getById(request, response) {
+        try {
+            const id = +request.params.id;
+
+            let result = await Villa.findByPk(id, {
+                order: [
+                    ['id', 'asc']
+                ],
+                include: [Location, VillaGalery]
+            });
+
+            result !== null ? response.status(200).json({
+                status: true,
+                message: `Villa with an ID of ${id} found!`,
+                data: result
+            }) : response.status(404).json({
+                status: true,
+                message: `Villa with an ID of ${id} wasn't found!`,
+                data: result
             })
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            });
+        }
+    }
+
+    static async search(request, response) {
+        try {
+            const query = request.params.query.toLowerCase();
+
+            let result = await Villa.findAll({
+                where: {
+                    name: sequelize.where(sequelize.fn('LOWER', sequelize.col('Villa.name')), 'LIKE', '%' + query + '%')
+                },
+                include: [Location, VillaGalery],
+                order: [
+                    ['id', 'asc']
+                ]
+            });
+
+            result.length !== 0 ? response.status(200).json({
+                status: true,
+                message: `${result.length} results found`,
+                data: result
+            }) : response.status(404).json({
+                status: false,
+                message: `${result.length} results found`,
+                data: result
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            });
         }
     }
 }

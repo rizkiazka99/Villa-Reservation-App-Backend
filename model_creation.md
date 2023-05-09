@@ -2,6 +2,8 @@ bash ```
 
 npx sequelize-cli model:create --name User --attributes email:string,phone:integer,name:string,password:string,profile_picture:string
 
+npx sequelize-cli model:create --name Admin --attributes email:string,phone:integer,name:string,password:string,profile_picture:string,role:string
+
 npx sequelize-cli model:create --name Location --attributes name:string
 
 npx sequelize-cli model:create --name Villa --attributes LocationId:integer,name:string,description:string,price:integer,map_url:string,image_name:string

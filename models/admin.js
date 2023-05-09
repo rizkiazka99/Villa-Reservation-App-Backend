@@ -4,19 +4,17 @@ const {
 } = require('sequelize');
 const { encryptPassword } = require('../helpers/bcrypt');
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Admin extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      User.belongsToMany(models.Villa, { through: models.Booking });
-      User.belongsToMany(models.Villa, { through: models.VillaReview });
-      User.hasMany(models.Favorite);
+      // define association here
     }
   }
-  User.init({
+  Admin.init({
     email: DataTypes.STRING,
     phone: DataTypes.BIGINT,
     name: DataTypes.STRING,
@@ -24,14 +22,14 @@ module.exports = (sequelize, DataTypes) => {
     profile_picture: DataTypes.STRING,
     role: DataTypes.STRING
   }, {
+    sequelize,
     hooks: {
-      beforeCreate: (user, options) => {
-        user.password = encryptPassword(user.password),
-        user.role = 'User'
+      beforeCreate: (admin, options) => {
+        admin.password = encryptPassword(admin.password),
+        admin.role = 'Admin'
       }
     },
-    sequelize,
-    modelName: 'User',
+    modelName: 'Admin',
   });
-  return User;
+  return Admin;
 };

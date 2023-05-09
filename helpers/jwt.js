@@ -2,10 +2,10 @@ const jwt = require('jsonwebtoken');
 const secretCode = process.env.SECRETCODE || 'undecryptable-secret';
 
 const generateToken = (data) => {
-    const { id, email, phone, name, password, profile_picture } = data;
+    const { id, email, phone, name, password, profile_picture, role } = data;
 
     return jwt.sign({
-        id, email, phone, name, password, profile_picture
+        id, email, phone, name, password, profile_picture, role
     }, secretCode);
 }
 

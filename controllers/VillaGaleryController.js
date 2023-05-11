@@ -27,7 +27,11 @@ class VillaGaleryController {
         try {
 
         } catch(err) {
-            
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            });
         }
     }
 

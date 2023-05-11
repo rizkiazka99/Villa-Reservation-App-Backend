@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     VillaId: DataTypes.INTEGER,
     UserId: DataTypes.INTEGER,
-    rating: DataTypes.STRING,
-    comment: DataTypes.STRING
+    rating: DataTypes.DOUBLE,
+    comment: DataTypes.STRING(1024)
   }, {
     sequelize,
     modelName: 'VillaReview',

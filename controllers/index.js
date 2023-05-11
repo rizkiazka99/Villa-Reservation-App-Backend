@@ -4,6 +4,7 @@ const VillaController = require('./VillaController.js');
 const LocationController = require('./LocationController.js');
 const VillaGaleryController = require('./VillaGaleryController.js');
 const FavoriteController = require('./FavoriteController.js');
+const VillaReviewController = require('./VillaReviewsController.js');
 
 module.exports = {
     UserController,
@@ -11,5 +12,6 @@ module.exports = {
     VillaController,
     LocationController,
     VillaGaleryController,
-    FavoriteController
+    FavoriteController,
+    VillaReviewController
 }

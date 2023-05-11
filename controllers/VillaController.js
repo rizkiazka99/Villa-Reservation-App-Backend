@@ -77,7 +77,7 @@ class VillaController {
                     map_url: map_url === undefined ? defaultData.map_url : map_url,
                     phone: phone === undefined ? defaultData.phone : phone,
                     bedroom: bedroom === undefined ? defaultData.bedroom : bedroom,
-                    bathroom: bathroom === bathroom ? defaultData.bathroom : bathroom,
+                    bathroom: bathroom === undefined ? defaultData.bathroom : bathroom,
                     swimming_pool: swimming_pool === undefined ? defaultData.swimming_pool : swimming_pool
                 }, {
                     where: {id}

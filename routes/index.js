@@ -3,6 +3,7 @@ const usersRoutes = require('./usersRoutes.js');
 const adminsRoutes = require('./adminsRoutes.js');
 const villasRoutes = require('./villasRoutes.js');
 const locationsRoutes = require('./locationsRoutes.js');
+const villaGaleriesRoutes = require('./villaGaleriesRoutes.js');
 
 route.get('/api', (request, response) => {
     response.status(200).json({
@@ -14,5 +15,6 @@ route.use('/api/users', usersRoutes);
 route.use('/api/admins', adminsRoutes);
 route.use('/api/villas', villasRoutes);
 route.use('/api/locations', locationsRoutes);
+route.use('/api/villaGaleries', villaGaleriesRoutes);
 
 module.exports = route;

@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Location.hasMany(models.Villa);
-      Location.hasMany(models.Favorite);
     }
   }
   Location.init({

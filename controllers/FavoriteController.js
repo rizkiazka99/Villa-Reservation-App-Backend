@@ -1,4 +1,5 @@
-const { Favorite } = require('../models');
+const { Op } = require('sequelize');
+const { Favorite, User, Villa } = require('../models');
 
 class FavoriteController {
     static async getAll(request, response) {
@@ -6,7 +7,8 @@ class FavoriteController {
             let result = await Favorite.findAll({
                 order: [
                     ['id', 'asc']
-                ]
+                ],
+                include: [User, Villa]
             });
 
             response.status(200).json({
@@ -52,17 +54,44 @@ class FavoriteController {
 
     static async add(request, response) {
         try {
-            const { UserId, LocationId, name, description, price, map_url } = request.body;
+            const roleAuth = request.userData.role;
+            const UserId = +request.userData.id;
+            const { VillaId } = request.body;
 
-            let result = await Favorite.create({
-                UserId, LocationId, name, description, price, map_url
-            });
+            if(roleAuth !== 'User') {
+                response.status(403).json({
+                    status: false,
+                    message: 'Only Users are allowed to do this action!',
+                    data: null
+                });
+            } else {
+                let duplicateFavorite = await Favorite.findAll({
+                    where: {
+                        [Op.and]: [
+                            { UserId },
+                            { VillaId }
+                        ]
+                    }
+                });
 
-            response.status(201).json({
-                status: true,
-                message: `${name} has been added to the Favorites of a User with an ID of ${UserId}`,
-                data: result
-            });
+                if (duplicateFavorite.length !== 0) {
+                    response.status(403).json({
+                        status: false,
+                        message: 'You already have this Villa in your Favorites',
+                        data: null
+                    });
+                } else {
+                    let result = await Favorite.create({
+                        UserId, VillaId
+                    });
+        
+                    response.status(201).json({
+                        status: true,
+                        message: `Villa with an ID of ${VillaId} has been added to the Favorites of a User with an ID of ${UserId}`,
+                        data: result
+                    });
+                }
+            }
         } catch(err) {
             response.status(500).json({
                 status: false,

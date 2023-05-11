@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Favorite.belongsTo(models.User);
       Favorite.belongsTo(models.Location);
+      Favorite.belongsTo(models.Villa);
     }
   }
   Favorite.init({
@@ -20,8 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     price: DataTypes.INTEGER,
-    map_url: DataTypes.STRING,
-    image_name: DataTypes.STRING
+    map_url: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Favorite',

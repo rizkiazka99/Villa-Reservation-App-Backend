@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Villa.belongsToMany(models.User, { through: models.VillaReview });
       Villa.hasMany(models.VillaGalery);
       Villa.belongsTo(models.Location);
+      Villa.hasMany(models.Favorite);
     }
   }
   Villa.init({

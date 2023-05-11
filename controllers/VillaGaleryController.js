@@ -38,7 +38,27 @@ class VillaGaleryController {
 
             response.status(200).json({
                 status: true,
-                message: `VillaGallery for Villa with an ID of  ${VillaId} fetched!`,
+                message: `VillaGallery of Villa with an ID of ${VillaId} fetched!`,
+                data: result
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            });
+        }
+    }
+
+    static async getById(request, response) {
+        try {
+            const id = +request.params.id;
+
+            let result = await VillaGalery.findByPk(id);
+
+            response.status(200).json({
+                status: true,
+                message: `VillaGallery with an ID of ${id} fetched!`,
                 data: result
             });
         } catch(err) {
@@ -73,7 +93,7 @@ class VillaGaleryController {
                     resultArr.push(result);
                 }
 
-                response.status(200).json({
+                response.status(201).json({
                     status: true,
                     message: `Images for Villa with an ID of ${VillaId} have been added`,
                     data: resultArr
@@ -96,8 +116,7 @@ class VillaGaleryController {
             if(roleAuth !== 'Admin') {
                 response.status(403).json({
                     status: false,
-                    message: 'Only admins are allowed to do this action',
-                    data: null
+                    message: 'Only admins are allowed to do this action'
                 });
             } else {
                 let result = await VillaGalery.destroy({
@@ -115,8 +134,7 @@ class VillaGaleryController {
         } catch(err) {
             response.status(500).json({
                 status: false,
-                message: String(err),
-                data: null
+                message: String(err)
             });
         }
     }

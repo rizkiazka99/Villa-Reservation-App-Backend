@@ -39,7 +39,7 @@ class LocationController {
                 
                 let result = await Location.create({ name });
                 
-                response.status(200).json({
+                response.status(201).json({
                     status: true,
                     message: `${name} has been created`,
                     data: result

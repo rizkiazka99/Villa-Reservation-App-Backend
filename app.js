@@ -9,7 +9,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
-//app.use('/uploads', express.static('/uploads'));
 app.use(routes);
 
 app.listen(port, () => {

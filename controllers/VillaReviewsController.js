@@ -4,7 +4,7 @@ const { VillaReview } = require('../models');
 class VillaReviewController {
     static async getAll(request, response) {
         try {
-            let result = VillaReview.findAll({
+            let result = await VillaReview.findAll({
                 order: [
                     ['id', 'asc']
                 ]

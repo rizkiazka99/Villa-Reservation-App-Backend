@@ -1,4 +1,4 @@
-const { Villa, Location, VillaGalery, VillaReview, sequelize } = require('../models');
+const { Villa, Location, VillaGalery, VillaReview, Booking, sequelize } = require('../models');
 
 class VillaController {
     static async getAll(request, response) {
@@ -7,7 +7,7 @@ class VillaController {
                 order: [
                     [ 'id', 'asc' ]
                 ],
-                include: [ Location, VillaReview, VillaGalery ]
+                include: [ Location, VillaReview, VillaGalery, Booking ]
             });
 
             response.status(200).json({
@@ -138,7 +138,7 @@ class VillaController {
                 order: [
                     ['id', 'asc']
                 ],
-                include: [Location, VillaReview, VillaGalery]
+                include: [Location, VillaReview, VillaGalery, Booking]
             });
 
             result !== null ? response.status(200).json({
@@ -167,7 +167,7 @@ class VillaController {
                 where: {
                     name: sequelize.where(sequelize.fn('LOWER', sequelize.col('Villa.name')), 'LIKE', '%' + query + '%')
                 },
-                include: [Location, VillaReview, VillaGalery],
+                include: [Location, VillaReview, VillaGalery, Booking],
                 order: [
                     ['id', 'asc']
                 ]

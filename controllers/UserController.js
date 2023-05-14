@@ -1,4 +1,4 @@
-const { User, Favorite, VillaReview, sequelize } = require('../models');
+const { User, Favorite, VillaReview, Booking, sequelize } = require('../models');
 const { encryptPassword, decryptPassword } = require('../helpers/bcrypt.js');
 const { generateToken, verifyToken } = require('../helpers/jwt.js');
 const { Op } = require('sequelize');
@@ -166,7 +166,7 @@ class UserController {
             const id = +request.params.id;
 
             let result = await User.findByPk(id, {
-                include: [ Favorite, VillaReview ],
+                include: [ Favorite, VillaReview, Booking ],
                 attributes: {
                     exclude: [ 'password' ]
                 }
@@ -204,7 +204,7 @@ class UserController {
                         { email: sequelize.where(sequelize.fn('LOWER', sequelize.col('email')), 'LIKE', '%' + query + '%') }
                     ]
                 }, 
-                include: [ Favorite, VillaReview ],
+                include: [ Favorite, VillaReview, Booking ],
                 attributes: {
                     exclude: [ 'password' ]
                 }
@@ -234,7 +234,7 @@ class UserController {
                 order: [
                     [ 'id', 'asc' ]
                 ],
-                include: [ Favorite, VillaReview ],
+                include: [ Favorite, VillaReview, Booking ],
                 attributes: {
                     exclude: [ 'password' ]
                 }

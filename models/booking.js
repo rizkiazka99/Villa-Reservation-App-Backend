@@ -24,10 +24,11 @@ module.exports = (sequelize, DataTypes) => {
     UserId: DataTypes.INTEGER,
     VillaId: DataTypes.INTEGER,
     total_price: DataTypes.INTEGER,
-    booking_start_date: DataTypes.INTEGER,
-    booking_end_date: DataTypes.INTEGER,
+    booking_start_date: DataTypes.STRING,
+    booking_end_date: DataTypes.STRING,
     payment: DataTypes.TEXT,
-    status: DataTypes.STRING
+    status: DataTypes.STRING,
+    payment_via: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Booking',

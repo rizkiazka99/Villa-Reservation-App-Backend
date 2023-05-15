@@ -17,17 +17,16 @@ module.exports = (sequelize, DataTypes) => {
   }
   Booking.init({
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       primaryKey: true,
-      allowNull: false,
-      autoIncrement: true
+      allowNull: false
     },
     UserId: DataTypes.INTEGER,
     VillaId: DataTypes.INTEGER,
     total_price: DataTypes.INTEGER,
     booking_start_date: DataTypes.INTEGER,
     booking_end_date: DataTypes.INTEGER,
-    payment: DataTypes.STRING,
+    payment: DataTypes.TEXT,
     status: DataTypes.STRING
   }, {
     sequelize,

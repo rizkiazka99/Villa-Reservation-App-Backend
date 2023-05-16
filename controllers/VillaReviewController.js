@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { VillaReview } = require('../models');
+const { VillaReview, User, Villa } = require('../models');
 
 class VillaReviewController {
     static async getAll(request, response) {
@@ -7,7 +7,8 @@ class VillaReviewController {
             let result = await VillaReview.findAll({
                 order: [
                     ['id', 'asc']
-                ]
+                ],
+                include: [ User, Villa ]
             });
 
             response.status(200).json({
@@ -29,13 +30,33 @@ class VillaReviewController {
             const VillaId = +request.params.VillaId;
             
             let result = await VillaReview.findAll({
-                where: { VillaId }
+                where: { VillaId },
+                include: [ User ],
+                order: [
+                    ['id', 'asc']
+                ]
             });
+
+            if (result.length > 0) {
+                let totalRating = 0;
+                let averageRating = 0;
+                
+                result.forEach((review) => {
+                    totalRating += review.rating;
+                    averageRating = totalRating / result.length
+                });
+                console.log(totalRating)
+                result = {
+                    reviews: result,
+                    averageRating: averageRating
+                };
+            }
 
             response.status(200).json({
                 status: true,
                 message: `VillaReviews for Villa with an ID of ${VillaId} fetched`,
-                data: result
+                data: result,
+                
             });
         } catch(err) {
             response.status(500).json({

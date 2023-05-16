@@ -1,4 +1,4 @@
-const { Villa, Location, VillaGalery, VillaReview, Booking, sequelize } = require('../models');
+const { Villa, Location, VillaGalery, VillaReview, Booking, Favorite, sequelize } = require('../models');
 
 class VillaController {
     static async getAll(request, response) {
@@ -7,14 +7,55 @@ class VillaController {
                 order: [
                     [ 'id', 'asc' ]
                 ],
-                include: [ Location, VillaReview, VillaGalery, Booking ]
+                include: [ Location, VillaReview, Favorite, VillaGalery ]
             });
 
-            response.status(200).json({
-                status: true,
-                message: 'All villas fetched',
-                data: result
-            });
+            if (result.length > 0) {
+                let totalRating = 0;
+                let averageRating = 0;
+
+                for(let i = 0; i < result.length; i++) {
+                    if (result[i].VillaReviews.length !== 0) {
+                        let VillaReviews = result[i].VillaReviews;
+
+                        for(let j = 0; j < VillaReviews.length; j++) {
+                            totalRating += VillaReviews[j].rating;
+                            averageRating = totalRating / VillaReviews.length
+                        }
+
+                        result[i].averageRating = averageRating;
+                        totalRating = 0;
+                        averageRating = 0;
+                    } else {
+                        result[i].averageRating = null
+                    }
+                }
+
+                const fixedData = result.map((villa) => {
+                    return {
+                        id: villa.id,
+                        LocationId: villa.LocationId,
+                        name: villa.name,
+                        price: villa.price,
+                        Location: villa.Location,
+                        VillaGalleries: villa.VillaGaleries,
+                        averageRating: villa.averageRating,
+                        Favorites: villa.Favorites
+                    }
+                });
+
+                response.status(200).json({
+                    status: true,
+                    message: 'All villas fetched',
+                    data: fixedData
+                });
+            } else {
+                response.status(404).json({
+                    status: true,
+                    message: 'No villa found',
+                    data: result
+                });
+            }
         } catch(err) {
             response.status(500).json({
                 status: false,
@@ -138,7 +179,7 @@ class VillaController {
                 order: [
                     ['id', 'asc']
                 ],
-                include: [Location, VillaReview, VillaGalery, Booking]
+                include: [Location, VillaReview, VillaGalery, Booking, Favorite]
             });
 
             result !== null ? response.status(200).json({
@@ -159,6 +200,73 @@ class VillaController {
         }
     }
 
+    static async getByLocation(request, response) {
+        try {
+            const LocationId = +request.params.LocationId;
+
+            let result = await Villa.findAll({
+                where: {LocationId},
+                include: [Location, VillaReview, Favorite, VillaGalery],
+                order: [
+                    ['id', 'asc']
+                ]
+            });
+
+            if (result.length > 0) {
+                let totalRating = 0;
+                let averageRating = 0;
+
+                for(let i = 0; i < result.length; i++) {
+                    if (result[i].VillaReviews.length !== 0) {
+                        let VillaReviews = result[i].VillaReviews;
+
+                        for(let j = 0; j < VillaReviews.length; j++) {
+                            totalRating += VillaReviews[j].rating;
+                            averageRating = totalRating / VillaReviews.length
+                        }
+
+                        result[i].averageRating = averageRating;
+                        totalRating = 0;
+                        averageRating = 0;
+                    } else {
+                        result[i].averageRating = null
+                    }
+                }
+
+                const fixedData = result.map((villa) => {
+                    return {
+                        id: villa.id,
+                        LocationId: villa.LocationId,
+                        name: villa.name,
+                        price: villa.price,
+                        Location: villa.Location,
+                        VillaGalleries: villa.VillaGaleries,
+                        averageRating: villa.averageRating,
+                        Favorites: villa.Favorites
+                    }
+                });
+
+                response.status(200).json({
+                    status: true,
+                    message: `${result.length} results found`,
+                    data: fixedData
+                });
+            } else {
+                response.status(404).json({
+                    status: true,
+                    message: `${result.length} results found`,
+                    data: result
+                });
+            }
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            });
+        }
+    }
+
     static async search(request, response) {
         try {
             const query = request.params.query.toLowerCase();
@@ -167,21 +275,58 @@ class VillaController {
                 where: {
                     name: sequelize.where(sequelize.fn('LOWER', sequelize.col('Villa.name')), 'LIKE', '%' + query + '%')
                 },
-                include: [Location, VillaReview, VillaGalery, Booking],
+                include: [Location, VillaReview, Favorite, VillaGalery],
                 order: [
                     ['id', 'asc']
                 ]
             });
 
-            result.length !== 0 ? response.status(200).json({
-                status: true,
-                message: `${result.length} results found`,
-                data: result
-            }) : response.status(404).json({
-                status: false,
-                message: `${result.length} results found`,
-                data: result
-            });
+            if (result.length > 0) {
+                let totalRating = 0;
+                let averageRating = 0;
+
+                for(let i = 0; i < result.length; i++) {
+                    if (result[i].VillaReviews.length !== 0) {
+                        let VillaReviews = result[i].VillaReviews;
+
+                        for(let j = 0; j < VillaReviews.length; j++) {
+                            totalRating += VillaReviews[j].rating;
+                            averageRating = totalRating / VillaReviews.length
+                        }
+
+                        result[i].averageRating = averageRating;
+                        totalRating = 0;
+                        averageRating = 0;
+                    } else {
+                        result[i].averageRating = null
+                    }
+                }
+
+                const fixedData = result.map((villa) => {
+                    return {
+                        id: villa.id,
+                        LocationId: villa.LocationId,
+                        name: villa.name,
+                        price: villa.price,
+                        Location: villa.Location,
+                        VillaGalleries: villa.VillaGaleries,
+                        averageRating: villa.averageRating,
+                        Favorites: villa.Favorites
+                    }
+                });
+
+                response.status(200).json({
+                    status: true,
+                    message: `${result.length} results found`,
+                    data: fixedData
+                });
+            } else {
+                response.status(404).json({
+                    status: true,
+                    message: `${result.length} results found`,
+                    data: result
+                });
+            }
         } catch(err) {
             response.status(500).json({
                 status: false,

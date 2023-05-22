@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Booking, Villa, User } = require('../models');
+const { Booking, Villa, User, VillaGalery } = require('../models');
 const midtransClient = require('midtrans-client');
 
 let coreApi = new midtransClient.CoreApi({
@@ -15,7 +15,12 @@ class BookingController {
                 order: [
                     ['id', 'asc']
                 ],
-                include: [User, Villa]
+                include: [User, {
+                    model: Villa,
+                    include: [{
+                        model: VillaGalery
+                    }]
+                }]
             });
 
             if (result.length > 0) {
@@ -69,7 +74,12 @@ class BookingController {
                 order: [
                     ['id', 'asc']
                 ],
-                include: [User, Villa]
+                include: [User, {
+                    model: Villa,
+                    include: [{
+                        model: VillaGalery
+                    }]
+                }]
             });
 
             if (result.length > 0) {
@@ -123,7 +133,12 @@ class BookingController {
                 order: [
                     ['id', 'asc']
                 ],
-                include: [User, Villa]
+                include: [User, {
+                    model: Villa,
+                    include: [{
+                        model: VillaGalery
+                    }]
+                }]
             });
 
             if (result.length > 0) {
@@ -171,7 +186,12 @@ class BookingController {
             const id = request.params.id;
 
             let result = await Booking.findByPk(id, {
-                include: [User, Villa]
+                include: [User, {
+                    model: Villa,
+                    include: [{
+                        model: VillaGalery
+                    }]
+                }]
             });
 
             if (result !== null) {
@@ -308,6 +328,47 @@ class BookingController {
                     id: orderId
                 }
             });
+
+            result[0] === 1 ? response.status(200).json({
+                status: true,
+                message: 'Succesfully notified Midtrans about the payment',
+                data: null
+            }) : response.status(500).json({
+                status: false,
+                message: 'Failed to notify Midtrans about the payment',
+                data: null
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            });
+        }
+    }
+
+    static async checkAll(request, response) {
+        try {
+            let bookings = await Booking.findAll();
+            console.log(bookings);
+            let result;
+
+            if (bookings.length != 0) {
+                for (let i = 0; i < bookings.length; i++) {
+                    let statusResponse = await coreApi.transaction.status(bookings.data[index].id);
+                    let payment = JSON.stringify(statusResponse);
+
+                    result = await Booking.update({
+                        payment: payment,
+                        status: statusResponse.transaction_status
+                    }, {
+                        where: {
+                            id: bookings.data[index].id
+                        }
+                    });
+                }
+            }
+            console.log(result);
 
             result[0] === 1 ? response.status(200).json({
                 status: true,

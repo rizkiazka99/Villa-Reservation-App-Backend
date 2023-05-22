@@ -85,7 +85,7 @@ class VillaGaleryController {
                 let result;
                 let resultArr = [];
 
-                for(let i = 0; request.files.length; i++) {
+                for(let i = 0; i < request.files.length; i++) {
                     result = await VillaGalery.create({
                         VillaId, image_name: request.files[i].path
                     });

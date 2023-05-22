@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Booking, Villa, User } = require('../models');
+const { Booking, Villa, User, VillaGalery } = require('../models');
 const midtransClient = require('midtrans-client');
 
 let coreApi = new midtransClient.CoreApi({
@@ -15,7 +15,12 @@ class BookingController {
                 order: [
                     ['id', 'asc']
                 ],
-                include: [User, Villa]
+                include: [User, {
+                    model: Villa,
+                    include: [{
+                        model: VillaGalery
+                    }]
+                }]
             });
 
             if (result.length > 0) {
@@ -69,7 +74,12 @@ class BookingController {
                 order: [
                     ['id', 'asc']
                 ],
-                include: [User, Villa]
+                include: [User, {
+                    model: Villa,
+                    include: [{
+                        model: VillaGalery
+                    }]
+                }]
             });
 
             if (result.length > 0) {
@@ -123,7 +133,12 @@ class BookingController {
                 order: [
                     ['id', 'asc']
                 ],
-                include: [User, Villa]
+                include: [User, {
+                    model: Villa,
+                    include: [{
+                        model: VillaGalery
+                    }]
+                }]
             });
 
             if (result.length > 0) {
@@ -171,7 +186,12 @@ class BookingController {
             const id = request.params.id;
 
             let result = await Booking.findByPk(id, {
-                include: [User, Villa]
+                include: [User, {
+                    model: Villa,
+                    include: [{
+                        model: VillaGalery
+                    }]
+                }]
             });
 
             if (result !== null) {

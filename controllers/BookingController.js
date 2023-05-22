@@ -12,15 +12,16 @@ class BookingController {
     static async getAll(request, response) {
         try {
             let result = await Booking.findAll({
-                order: [
-                    ['id', 'asc']
-                ],
                 include: [User, {
                     model: Villa,
                     include: [{
                         model: VillaGalery
                     }]
-                }]
+                }],
+                order: [
+                    ['createdAt', 'asc'],
+                    [Villa, VillaGalery, 'id', 'asc']
+                ],
             });
 
             if (result.length > 0) {
@@ -71,15 +72,16 @@ class BookingController {
                 where: {
                     UserId: UserId
                 },
-                order: [
-                    ['id', 'asc']
-                ],
                 include: [User, {
                     model: Villa,
                     include: [{
                         model: VillaGalery
                     }]
-                }]
+                }],
+                order: [
+                    ['createdAt', 'asc'],
+                    [Villa, VillaGalery, 'id', 'asc']
+                ],
             });
 
             if (result.length > 0) {
@@ -130,15 +132,16 @@ class BookingController {
                 where: {
                     VillaId: VillaId
                 },
-                order: [
-                    ['id', 'asc']
-                ],
                 include: [User, {
                     model: Villa,
                     include: [{
                         model: VillaGalery
                     }]
-                }]
+                }],
+                order: [
+                    ['createdAt', 'asc'],
+                    [Villa, VillaGalery, 'id', 'asc']
+                ],
             });
 
             if (result.length > 0) {
@@ -189,9 +192,12 @@ class BookingController {
                 include: [User, {
                     model: Villa,
                     include: [{
-                        model: VillaGalery
+                        model: VillaGalery,
                     }]
-                }]
+                }],
+                order: [
+                    [Villa, VillaGalery, 'id', 'asc']
+                ]
             });
 
             if (result !== null) {

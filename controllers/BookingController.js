@@ -19,7 +19,7 @@ class BookingController {
                     }]
                 }],
                 order: [
-                    ['createdAt', 'asc'],
+                    ['createdAt', 'desc'],
                     [Villa, VillaGalery, 'id', 'asc']
                 ],
             });
@@ -79,7 +79,7 @@ class BookingController {
                     }]
                 }],
                 order: [
-                    ['createdAt', 'asc'],
+                    ['createdAt', 'desc'],
                     [Villa, VillaGalery, 'id', 'asc']
                 ],
             });
@@ -139,7 +139,7 @@ class BookingController {
                     }]
                 }],
                 order: [
-                    ['createdAt', 'asc'],
+                    ['createdAt', 'desc'],
                     [Villa, VillaGalery, 'id', 'asc']
                 ],
             });

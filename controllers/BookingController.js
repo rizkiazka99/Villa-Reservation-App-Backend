@@ -254,7 +254,30 @@ class BookingController {
                         ]
                     }
                 });
-                console.log(duplicateBooking.length)
+                
+                let isDateTaken = await Booking.findAll({
+                    where: {
+                        [Op.and]: [
+                            { VillaId },
+                            {
+                                [Op.or]: [
+                                    { booking_start_date },
+                                    { booking_end_date },
+                                    { booking_start_date: booking_end_date },
+                                    { booking_end_date: booking_start_date }
+                                ]
+                            },
+                            {
+                                [Op.or]: [
+                                    { status: 'pending' },
+                                    { status: 'settlement' }
+                                ]
+                            }
+                        ]
+                    }
+                });
+
+
 
                 if (duplicateBooking.length !== 0) {
                     response.status(403).json({
@@ -262,6 +285,12 @@ class BookingController {
                         message: 'You already have a booking on the same Villa at the same date',
                         data: null
                     }); 
+                } else if (isDateTaken.length !== 0) {
+                    response.status(403).json({
+                        status: false,
+                        message: 'This villa has been booked on the date of your choosing',
+                        data: null
+                    });
                 } else {
                     let chargeResponse = await coreApi.charge(request.body);
                     const dataBooking = {

@@ -1,14 +1,23 @@
 const { Op } = require('sequelize');
-const { Favorite, User, Villa } = require('../models');
+const { Favorite, User, Villa, VillaGalery } = require('../models');
 
 class FavoriteController {
     static async getAll(request, response) {
         try {
             let result = await Favorite.findAll({
-                order: [
-                    ['id', 'asc']
+                include: [
+                    { model: User },
+                    { 
+                        model: Villa, 
+                        include: [
+                            { model: VillaGalery }
+                        ]
+                    }
                 ],
-                include: [User, Villa]
+                order: [
+                    ['createdAt', 'desc'],
+                    [Villa, VillaGalery, 'id', 'asc']
+                ]
             });
 
             response.status(200).json({
@@ -30,12 +39,21 @@ class FavoriteController {
             const UserId = +request.userData.id;
 
             let result = await Favorite.findAll({
-                order: [
-                    ['id', 'asc']
-                ],
                 where: {
                     UserId: UserId
-                }
+                },
+                include: [
+                    { 
+                        model: Villa, 
+                        include: [
+                            { model: VillaGalery }
+                        ]
+                    }
+                ],
+                order: [
+                    ['createdAt', 'desc'],
+                    [Villa, VillaGalery, 'id', 'asc']
+                ],
             });
 
             response.status(200).json({

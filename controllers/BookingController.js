@@ -244,17 +244,24 @@ class BookingController {
                             { UserId },
                             { VillaId },
                             { booking_start_date },
-                            { booking_end_date }
+                            { booking_end_date },
+                            { 
+                                [Op.or]: [
+                                    { status: 'pending' },
+                                    { status: 'settlement' }
+                                ]
+                            }
                         ]
                     }
                 });
+                console.log(duplicateBooking.length)
 
                 if (duplicateBooking.length !== 0) {
                     response.status(403).json({
                         status: false,
                         message: 'You already have a booking on the same Villa at the same date',
                         data: null
-                    });
+                    }); 
                 } else {
                     let chargeResponse = await coreApi.charge(request.body);
                     const dataBooking = {

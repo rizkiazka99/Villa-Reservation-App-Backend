@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { VillaReview, User, Villa } = require('../models');
+const { VillaReview, User, Villa, VillaGalery } = require('../models');
 
 class VillaReviewController {
     static async getAll(request, response) {
@@ -33,7 +33,7 @@ class VillaReviewController {
                 where: { VillaId },
                 include: [ User ],
                 order: [
-                    ['id', 'asc']
+                    ['createdAt', 'desc']
                 ]
             });
 
@@ -45,7 +45,6 @@ class VillaReviewController {
                     totalRating += review.rating;
                     averageRating = totalRating / result.length
                 });
-                console.log(totalRating)
                 result = {
                     reviews: result,
                     averageRating: averageRating
@@ -72,7 +71,16 @@ class VillaReviewController {
             const UserId = +request.userData.id;
             
             let result = await VillaReview.findAll({
-                where: { UserId }
+                where: { UserId },
+                include: [
+                    { model: Villa, include: [
+                        { model: VillaGalery }
+                    ]}
+                ],
+                order: [
+                    ['createdAt', 'desc'],
+                    [Villa, VillaGalery, 'id', 'asc']
+                ]
             });
 
             response.status(200).json({

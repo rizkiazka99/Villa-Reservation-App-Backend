@@ -243,8 +243,14 @@ class BookingController {
                         [Op.and]: [
                             { UserId },
                             { VillaId },
-                            { booking_start_date },
-                            { booking_end_date },
+                            {
+                                [Op.or]: [
+                                    { booking_start_date },
+                                    { booking_end_date },
+                                    { booking_start_date: booking_end_date },
+                                    { booking_end_date: booking_start_date }
+                                ]
+                            },
                             { 
                                 [Op.or]: [
                                     { status: 'pending' },

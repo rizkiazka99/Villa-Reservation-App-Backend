@@ -1,4 +1,4 @@
-const { Location, Villa } = require('../models');
+const { Location, Villa, VillaGalery, VillaReview } = require('../models');
 
 class LocationController {
     static async getAll(request, response) {
@@ -125,22 +125,67 @@ class LocationController {
             const id = +request.params.id;
 
             let result = await Location.findByPk(id, {
-                order: [
-                    ['id', 'asc']
+                include: [
+                    { model: Villa, include: [
+                        { model: Location },
+                        { model: VillaGalery },
+                        { model: VillaReview }
+                    ]}
                 ],
-                include: [ Villa ]
+                order: [
+                    ['id', 'asc'],
+                    [Villa, VillaGalery, 'id', 'asc']
+                ]
             });
 
-            result !== null ? response.status(200).json({
-                status: true,
-                message: `Location with an ID of ${id} found`,
-                data: result
-            }) : response.status(404).json({
-                status: true,
-                message: `Location with an ID of ${id} wasn't found`,
-                data: result
-            });
+            if (result) {
+                let totalRating = 0;
+                let averageRating = 0;
+
+                for(let i = 0; i < result.dataValues.Villas.length; i++) {
+                    if (result.dataValues.Villas[i].length != 0) {
+                        if (result.dataValues.Villas[i].VillaReviews.length != 0) {
+                            let villaReviews = result.dataValues.Villas[i].VillaReviews;
+
+                            for (let j = 0; j < villaReviews.length; j++) {
+                                totalRating += villaReviews[j].rating;
+                                averageRating = totalRating / villaReviews.length
+                            }
+
+                            result.dataValues.Villas[i].averageRating = averageRating;
+                            totalRating = 0;
+                            averageRating = 0;
+                        } else {
+                            result.dataValues.Villas[i].averageRating = null
+                        }
+                    }
+                }
+
+                result = result.dataValues.Villas.map((villa) => {
+                    return {
+                        id: villa.id,
+                        name: villa.name,
+                        price: villa.price,
+                        location: villa.Location.name,
+                        averageRating: villa.averageRating,
+                        VillaGalleries: villa.VillaGaleries
+                    }
+                });
+
+                response.status(200).json({
+                    status: true,
+                    message: `Location with an ID of ${id} found`,
+                    data: result
+                })
+            } else {
+                response.status(404).json({
+                    status: true,
+                    message: `Location with an ID of ${id} wasn't found`,
+                    data: result
+                });
+            }
         } catch(err) {
+            console.log(err)
             response.status(500).json({
                 status: false,
                 message: String(err),

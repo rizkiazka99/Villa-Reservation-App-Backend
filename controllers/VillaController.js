@@ -4,10 +4,11 @@ class VillaController {
     static async getAll(request, response) {
         try {
             let result = await Villa.findAll({
+                include: [ Location, VillaReview, Favorite, VillaGalery ],
                 order: [
-                    [ 'id', 'asc' ]
+                    [ 'id', 'asc' ],
+                    [ VillaGalery, 'id', 'asc' ]
                 ],
-                include: [ Location, VillaReview, Favorite, VillaGalery ]
             });
 
             if (result.length > 0) {
@@ -176,10 +177,11 @@ class VillaController {
             const id = +request.params.id;
 
             let result = await Villa.findByPk(id, {
+                include: [Location, VillaReview, VillaGalery, Booking, Favorite],
                 order: [
-                    ['id', 'asc']
+                    ['id', 'asc'],
+                    [VillaGalery, 'id', 'asc']
                 ],
-                include: [Location, VillaReview, VillaGalery, Booking, Favorite]
             });
 
             result !== null ? response.status(200).json({
@@ -277,7 +279,8 @@ class VillaController {
                 },
                 include: [Location, VillaReview, Favorite, VillaGalery],
                 order: [
-                    ['id', 'asc']
+                    ['id', 'asc'],
+                    [VillaGalery, 'id', 'asc']
                 ]
             });
 

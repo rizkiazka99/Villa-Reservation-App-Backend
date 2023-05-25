@@ -66,6 +66,88 @@ class VillaReviewController {
         }
     }
 
+    static async getByVillaDesc(request, response) {
+        try {
+            const VillaId = +request.params.VillaId;
+            
+            let result = await VillaReview.findAll({
+                where: { VillaId },
+                include: [ User ],
+                order: [
+                    ['rating', 'desc']
+                ]
+            });
+
+            if (result.length > 0) {
+                let totalRating = 0;
+                let averageRating = 0;
+                
+                result.forEach((review) => {
+                    totalRating += review.rating;
+                    averageRating = totalRating / result.length
+                });
+                result = {
+                    reviews: result,
+                    averageRating: averageRating
+                };
+            }
+
+            response.status(200).json({
+                status: true,
+                message: `VillaReviews for Villa with an ID of ${VillaId} fetched`,
+                data: result,
+                
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            }); 
+        }
+    }
+
+    static async getByVillaAsc(request, response) {
+        try {
+            const VillaId = +request.params.VillaId;
+            
+            let result = await VillaReview.findAll({
+                where: { VillaId },
+                include: [ User ],
+                order: [
+                    ['rating', 'asc']
+                ]
+            });
+
+            if (result.length > 0) {
+                let totalRating = 0;
+                let averageRating = 0;
+                
+                result.forEach((review) => {
+                    totalRating += review.rating;
+                    averageRating = totalRating / result.length
+                });
+                result = {
+                    reviews: result,
+                    averageRating: averageRating
+                };
+            }
+
+            response.status(200).json({
+                status: true,
+                message: `VillaReviews for Villa with an ID of ${VillaId} fetched`,
+                data: result,
+                
+            });
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err),
+                data: null
+            }); 
+        }
+    }
+
     static async getByUser(request, response) {
         try {
             const UserId = +request.userData.id;

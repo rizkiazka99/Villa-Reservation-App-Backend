@@ -184,6 +184,22 @@ class VillaController {
                 ],
             });
 
+            if (result) {
+                let totalRating = 0;
+                let averageRating = 0;
+
+                if (result.dataValues.VillaReviews.length !== 0) {
+                    for(let i = 0; i < result.dataValues.VillaReviews.length; i++) {
+                        totalRating += result.dataValues.VillaReviews[i].rating;
+                        averageRating = totalRating / result.dataValues.VillaReviews.length
+                    }
+
+                    result.dataValues.averageRating = averageRating;
+                } else {
+                    result.dataValues.averageRating = null;
+                }
+            } 
+
             result !== null ? response.status(200).json({
                 status: true,
                 message: `Villa with an ID of ${id} found!`,
@@ -192,7 +208,7 @@ class VillaController {
                 status: true,
                 message: `Villa with an ID of ${id} wasn't found!`,
                 data: result
-            })
+            });
         } catch(err) {
             response.status(500).json({
                 status: false,

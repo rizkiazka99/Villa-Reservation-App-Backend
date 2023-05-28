@@ -106,11 +106,56 @@ class UserController {
         }
     }
 
+    static async verifyPassword(request, response) {
+        try {
+            const role = request.userData.role;
+            const id = +request.userData.id;
+            const { password } = request.body;
+
+            if (role !== 'User') {
+                response.status(403).json({
+                    status: false,
+                    message: 'Only Users are allowed to do this action'
+                });
+            } else {
+                let account = await User.findOne({
+                    where: { id }
+                });
+
+                if (account) {
+                    const isPasswordCorrect = decryptPassword(password, account.password);
+
+                    if (isPasswordCorrect) {
+                        response.status(200).json({
+                            status: true,
+                            message: 'Password verified!'
+                        });
+                    } else {
+                        response.status(403).json({
+                            status: false,
+                            message: 'Failed to verify password'
+                        });
+                    }
+                } else {
+                    response.status(404).json({
+                        status: false,
+                        message: 'Account with this e-mail address wasn\'t found'
+                    });
+                }
+            }
+        } catch(err) {
+            response.status(500).json({
+                status: false,
+                message: String(err)
+            });
+        }
+    }
+
     static async update(request, response) {
         try {
             const id = +request.params.id;
             const idAuth = +request.userData.id;
-            const { email, phone, name, password } = request.body;
+            const { phone, name, password } = request.body;
             let result;
 
             if (id !== idAuth) {
@@ -125,7 +170,6 @@ class UserController {
                     let profile_picture = request.file.path;
 
                     result = await User.update({
-                        email: email === undefined ? defaultData.email : email,
                         phone: phone === undefined ? defaultData.phone : phone,
                         name: name === undefined ? defaultData.name : name,
                         password: password == undefined ? defaultData.password : encryptPassword(password),
@@ -135,7 +179,6 @@ class UserController {
                     });
                 } else {
                     result = await User.update({
-                        email: email === undefined ? defaultData.email : email,
                         phone: phone === undefined ? defaultData.phone : phone,
                         name: name === undefined ? defaultData.name : name,
                         password: password == undefined ? defaultData.password : encryptPassword(password),

@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Favorite, User, Villa, VillaGalery } = require('../models');
+const { Favorite, User, Villa, VillaGalery, Location } = require('../models');
 
 class FavoriteController {
     static async getAll(request, response) {
@@ -10,7 +10,8 @@ class FavoriteController {
                     { 
                         model: Villa, 
                         include: [
-                            { model: VillaGalery }
+                            { model: VillaGalery },
+                            { model: Location }
                         ]
                     }
                 ],
@@ -46,7 +47,8 @@ class FavoriteController {
                     { 
                         model: Villa, 
                         include: [
-                            { model: VillaGalery }
+                            { model: VillaGalery },
+                            { model: Location }
                         ]
                     }
                 ],

@@ -7,7 +7,8 @@ class VillaController {
                 include: [ Location, VillaReview, Favorite, VillaGalery ],
                 order: [
                     [ 'id', 'asc' ],
-                    [ VillaGalery, 'id', 'asc' ]
+                    [ VillaGalery, 'id', 'asc' ],
+                    [ VillaReview, 'rating', 'desc' ]
                 ],
             });
 
@@ -180,7 +181,8 @@ class VillaController {
                 include: [Location, VillaReview, VillaGalery, Booking, Favorite],
                 order: [
                     ['id', 'asc'],
-                    [VillaGalery, 'id', 'asc']
+                    [VillaGalery, 'id', 'asc'],
+                    [VillaReview, 'rating', 'desc']
                 ],
             });
 
@@ -226,7 +228,9 @@ class VillaController {
                 where: {LocationId},
                 include: [Location, VillaReview, Favorite, VillaGalery],
                 order: [
-                    ['id', 'asc']
+                    ['id', 'asc'],
+                    [VillaGalery, 'id', 'asc'],
+                    [VillaReview, 'rating', 'desc']
                 ]
             });
 
@@ -296,7 +300,8 @@ class VillaController {
                 include: [Location, VillaReview, Favorite, VillaGalery],
                 order: [
                     ['id', 'asc'],
-                    [VillaGalery, 'id', 'asc']
+                    [VillaGalery, 'id', 'asc'],
+                    [VillaReview, 'rating', 'desc']
                 ]
             });
 

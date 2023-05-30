@@ -1,10 +1,19 @@
-const { Villa, Location, VillaGalery, VillaReview, Booking, Favorite, sequelize } = require('../models');
+const { Villa, Location, VillaGalery, VillaReview, Booking, Favorite, User, sequelize } = require('../models');
 
 class VillaController {
     static async getAll(request, response) {
         try {
             let result = await Villa.findAll({
-                include: [ Location, VillaReview, Favorite, VillaGalery ],
+                include: [ Location, 
+                    {
+                        model: VillaReview,
+                        include: [
+                            { model: User}
+                        ]
+                    }, 
+                    Favorite, 
+                    VillaGalery 
+                ],
                 order: [
                     [ 'id', 'asc' ],
                     [ VillaGalery, 'id', 'asc' ],
@@ -178,7 +187,18 @@ class VillaController {
             const id = +request.params.id;
 
             let result = await Villa.findByPk(id, {
-                include: [Location, VillaReview, VillaGalery, Booking, Favorite],
+                include: [
+                    Location, 
+                    {
+                        model: VillaReview,
+                        include: [
+                            { model: User }
+                        ]
+                    }, 
+                    VillaGalery, 
+                    Booking, 
+                    Favorite
+                ],
                 order: [
                     ['id', 'asc'],
                     [VillaGalery, 'id', 'asc'],
@@ -226,7 +246,17 @@ class VillaController {
 
             let result = await Villa.findAll({
                 where: {LocationId},
-                include: [Location, VillaReview, Favorite, VillaGalery],
+                include: [
+                    Location, 
+                    {
+                        model: VillaReview,
+                        include: [
+                            { model: User }
+                        ]
+                    }, 
+                    Favorite, 
+                    VillaGalery
+                ],
                 order: [
                     ['id', 'asc'],
                     [VillaGalery, 'id', 'asc'],
@@ -297,7 +327,17 @@ class VillaController {
                 where: {
                     name: sequelize.where(sequelize.fn('LOWER', sequelize.col('Villa.name')), 'LIKE', '%' + query + '%')
                 },
-                include: [Location, VillaReview, Favorite, VillaGalery],
+                include: [
+                    Location, 
+                    {
+                        model: VillaReview,
+                        include: [
+                            { model: User }
+                        ]
+                    }, 
+                    Favorite, 
+                    VillaGalery
+                ],
                 order: [
                     ['id', 'asc'],
                     [VillaGalery, 'id', 'asc'],
